@@ -1,4 +1,4 @@
-name: Pylint
+name: Test
 
 on:
   pull_request:
@@ -25,9 +25,8 @@ jobs:
       - name: Run tests
         continue-on-error: true
         run: |
-          cd qa/
           python main.py
       - name: Publish test report
         uses: elenakulgavaya/pytest-report-action@v1.3
         with:
-          path: qa/test-report.xml
+          path: test-report.xml
