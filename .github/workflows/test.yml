@@ -1,0 +1,33 @@
+name: Pylint
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  SAMPLE_API_TEST_TOKEN: ${{ secrets.SAMPLE_API_TOKEN }}
+
+jobs:
+  run-tests:
+    name: Run API tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests
+        continue-on-error: true
+        run: |
+          cd qa/
+          python main.py
+      - name: Publish test report
+        uses: elenakulgavaya/pytest-report-action@v1.3
+        with:
+          path: qa/test-report.xml
