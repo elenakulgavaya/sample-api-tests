@@ -19,7 +19,6 @@ def check_order_not_created():
     assert current_orders == 1, 'Unexpected orders in the list'
 
 
-@pytest.mark.xfail(strict=True, reason='issue #6')
 @pytest.mark.parametrize(argnames=['value', 'error_message'], argvalues=[
     (fake_string_attr(Fakeable.Uuid), 'Invalid product_id: must be a number'),
     ('test_value', 'Invalid product_id: must be a number'),
@@ -68,7 +67,6 @@ def test_invalid_price_per_unit(value, error_message):
     }).request().verify(error_message=error_message)
 
 
-@pytest.mark.xfail(strict=True, reason='issue #8')
 def test_invalid_price_per_unit_zero():
     CreateOrder(updates={
         api.CreateOrderReq.PricePerUnit.name: 0
@@ -77,7 +75,6 @@ def test_invalid_price_per_unit_zero():
     )
 
 
-@pytest.mark.xfail(strict=True, reason='issue #9')
 @pytest.mark.parametrize(argnames=['value', 'error_message'], argvalues=[
     ('test', 'Invalid discount_rate: must be a number'),
     (2, 'discount_rate cannot be greater than 1'),
@@ -89,40 +86,19 @@ def test_invalid_discount_rate(value, error_message):
     }).request().verify(error_message=error_message)
 
 
-@pytest.mark.xfail(strict=True, reason='issues #4, #5')
 def test_check_if_note_is_escaped():
     CreateOrder(updates={
         api.CreateOrderReq.Note.name: "'; IF (1=2) WAITFOR DELAY '0:0:20'--"
     }).request().verify()
 
 
-@pytest.mark.xfail(strict=True, reason='issue #10')
-def test_missing_required_field_product_id():
-    field_name = api.CreateOrderReq.ProductId.name
-    CreateOrder(updates={field_name: None}).request().verify(
-        error_message=f'{field_name} is required'
-    )
-
-
-@pytest.mark.xfail(strict=True, reason='issue #11')
-def test_missing_required_field_quantity():
-    field_name = api.CreateOrderReq.Quantity.name
-    CreateOrder(updates={field_name: None}).request().verify(
-        error_message=f'{field_name} is required'
-    )
-
-
-@pytest.mark.xfail(strict=True, reason='issue #12')
-def test_missing_required_field_delivery_date():
-    field_name = api.CreateOrderReq.DeliveryDate.name
-    CreateOrder(updates={field_name: None}).request().verify(
-        error_message=f'{field_name} is required'
-    )
-
-
-@pytest.mark.xfail(strict=True, reason='issue #13')
-def test_missing_required_field_price_per_unit():
-    field_name = api.CreateOrderReq.PricePerUnit.name
+@pytest.mark.parametrize('field_name', [
+    api.CreateOrderReq.ProductId.name,
+    api.CreateOrderReq.Quantity.name,
+    api.CreateOrderReq.DeliveryDate.name,
+    api.CreateOrderReq.PricePerUnit.name,
+])
+def test_missing_required_field(field_name):
     CreateOrder(updates={field_name: None}).request().verify(
         error_message=f'{field_name} is required'
     )
