@@ -32,6 +32,10 @@ class CreateOrderResp(Dictionary):
     OrderDetails = OrderDetails(name='order_details')
 
 
+class ErrorResp(Dictionary):
+    Error = String(name='error', fake_as=Fakeable.Sentence)
+
+
 class CreateOrder(ApiMethod):
     method = HttpMethod.POST
     url = '/orders/create'
