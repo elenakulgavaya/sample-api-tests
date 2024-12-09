@@ -30,16 +30,19 @@ def test_invalid_product_id(value, error_message):
     }).request().verify(error_message=error_message)
 
 
+def test_invalid_quantity_string():
+    CreateOrder(updates={
+        api.CreateOrderReq.Quantity.name: 'test'
+    }).request().verify(error_message='Invalid quantity: must be a number')
+
+
+@pytest.mark.xfail(strict=True, reason='issue #7')
 @pytest.mark.parametrize(argnames=['value', 'error_message'], argvalues=[
-    ('test', 'Invalid quantity: must be a number'),
-    pytest.param(0, 'price_per_unit cannot be less than 0.01',
-                 marks=[pytest.mark.xfail(strict=True, reason='bug #7')]),
-    pytest.param(-1, 'price_per_unit cannot be negative',
-                 marks=[pytest.mark.xfail(strict=True, reason='issue #7')]),
-    pytest.param(0.5, 'Invalid quantity: must be a number',
-                 marks=[pytest.mark.xfail(strict=True, reason='issue #7')])
-], ids=['string', 'zero', 'negative', 'float'])
-def test_invalid_quantity(value, error_message):
+    (0, 'price_per_unit cannot be less than 0.01'),
+    (-1, 'price_per_unit cannot be negative'),
+    (0.5, 'Invalid quantity: must be a number'),
+], ids=['zero', 'negative', 'float'])
+def test_invalid_quantity_number(value, error_message):
     CreateOrder(updates={
         api.CreateOrderReq.Quantity.name: value
     }).request().verify(error_message=error_message)
@@ -57,14 +60,21 @@ def test_invalid_delivery_date(value):
 
 @pytest.mark.parametrize(argnames=['value', 'error_message'], argvalues=[
     ('test', 'Invalid price_per_unit: must be a number'),
-    pytest.param(0, 'price_per_unit cannot be less than 0.01',
-                 marks=[pytest.mark.xfail(strict=True, reason='issue #8')]),
     (-1, 'price_per_unit cannot be negative'),
-], ids=['string', 'zero', 'negative'])
+], ids=['string', 'negative'])
 def test_invalid_price_per_unit(value, error_message):
     CreateOrder(updates={
         api.CreateOrderReq.PricePerUnit.name: value
     }).request().verify(error_message=error_message)
+
+
+@pytest.mark.xfail(strict=True, reason='issue #8')
+def test_invalid_price_per_unit_zero():
+    CreateOrder(updates={
+        api.CreateOrderReq.PricePerUnit.name: 0
+    }).request().verify(
+        error_message='price_per_unit cannot be less than 0.01'
+    )
 
 
 @pytest.mark.xfail(strict=True, reason='issue #9')
@@ -86,17 +96,33 @@ def test_check_if_note_is_escaped():
     }).request().verify()
 
 
-@pytest.mark.parametrize('field_name', [
-    pytest.param(api.CreateOrderReq.ProductId.name,
-                 marks=[pytest.mark.xfail(strict=True, reason='issue #10')]),
-    pytest.param(api.CreateOrderReq.Quantity.name,
-                 marks=[pytest.mark.xfail(strict=True, reason='issue #11')]),
-    pytest.param(api.CreateOrderReq.DeliveryDate.name,
-                 marks=[pytest.mark.xfail(strict=True, reason='issue #12')]),
-    pytest.param(api.CreateOrderReq.PricePerUnit.name,
-                 marks=[pytest.mark.xfail(strict=True, reason='issue #13')]),
-])
-def test_missing_required_field(field_name):
+@pytest.mark.xfail(strict=True, reason='issue #10')
+def test_missing_required_field_product_id():
+    field_name = api.CreateOrderReq.ProductId.name
+    CreateOrder(updates={field_name: None}).request().verify(
+        error_message=f'{field_name} is required'
+    )
+
+
+@pytest.mark.xfail(strict=True, reason='issue #11')
+def test_missing_required_field_quantity():
+    field_name = api.CreateOrderReq.Quantity.name
+    CreateOrder(updates={field_name: None}).request().verify(
+        error_message=f'{field_name} is required'
+    )
+
+
+@pytest.mark.xfail(strict=True, reason='issue #12')
+def test_missing_required_field_delivery_date():
+    field_name = api.CreateOrderReq.DeliveryDate.name
+    CreateOrder(updates={field_name: None}).request().verify(
+        error_message=f'{field_name} is required'
+    )
+
+
+@pytest.mark.xfail(strict=True, reason='issue #13')
+def test_missing_required_field_price_per_unit():
+    field_name = api.CreateOrderReq.PricePerUnit.name
     CreateOrder(updates={field_name: None}).request().verify(
         error_message=f'{field_name} is required'
     )
