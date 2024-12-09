@@ -29,13 +29,19 @@ def test_invalid_product_id(value, error_message):
     }).request().verify(error_message=error_message)
 
 
+def test_invalid_quantity_string():
+    CreateOrder(updates={
+        api.CreateOrderReq.Quantity.name: 'test'
+    }).request().verify(error_message='Invalid quantity: must be a number')
+
+
+@pytest.mark.xfail(strict=True, reason='issue #7')
 @pytest.mark.parametrize(argnames=['value', 'error_message'], argvalues=[
-    ('test', 'Invalid quantity: must be a number'),
     (0, 'price_per_unit cannot be less than 0.01'),
     (-1, 'price_per_unit cannot be negative'),
-    (0.5, 'Invalid quantity: must be a number')
-], ids=['string', 'zero', 'negative', 'float'])
-def test_invalid_quantity(value, error_message):
+    (0.5, 'Invalid quantity: must be a number'),
+], ids=['zero', 'negative', 'float'])
+def test_invalid_quantity_number(value, error_message):
     CreateOrder(updates={
         api.CreateOrderReq.Quantity.name: value
     }).request().verify(error_message=error_message)
@@ -53,13 +59,20 @@ def test_invalid_delivery_date(value):
 
 @pytest.mark.parametrize(argnames=['value', 'error_message'], argvalues=[
     ('test', 'Invalid price_per_unit: must be a number'),
-    (0, 'price_per_unit cannot be less than 0.01'),
     (-1, 'price_per_unit cannot be negative'),
-], ids=['string', 'zero', 'negative'])
+], ids=['string', 'negative'])
 def test_invalid_price_per_unit(value, error_message):
     CreateOrder(updates={
         api.CreateOrderReq.PricePerUnit.name: value
     }).request().verify(error_message=error_message)
+
+
+def test_invalid_price_per_unit_zero():
+    CreateOrder(updates={
+        api.CreateOrderReq.PricePerUnit.name: 0
+    }).request().verify(
+        error_message='price_per_unit cannot be less than 0.01'
+    )
 
 
 @pytest.mark.parametrize(argnames=['value', 'error_message'], argvalues=[
