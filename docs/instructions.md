@@ -6,7 +6,9 @@ start automatically on creating a new pull request, or can be triggered manually
 from the action menu at
 [Test Pipeline](https://github.com/elenakulgavaya/sample-api-tests/actions/workflows/test.yml)
 Test results then can be observed on the run summary
-![img.png](img/results.png)
+![Test Run Results](img/results.png)
+It will also contain the information on the test failure in case of any
+![Test Fail Result](img/fail.png)
 
 ### Local setup for testing and development
 The list of dependencies is specified in `requirements.text` and can be used
