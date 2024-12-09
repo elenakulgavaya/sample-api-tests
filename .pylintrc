@@ -1,0 +1,36 @@
+[MASTER]
+init-hook='import sys; sys.path.append("./src")'
+ignore=LICENSE,
+    pyproject.toml,
+    README.md,
+    requirements.txt,
+    docs/,
+    pytest.ini,
+    setup.cfg,
+    pytest-coverage.txt,
+    test-report.xml
+ignore-paths=dist,
+    fild-api-hug.egg-info
+
+py-version=3.11
+suggestion-mode=yes
+
+[MESSAGES CONTROL]
+disable=missing-function-docstring,
+        missing-class-docstring,
+        missing-module-docstring,
+        import-outside-toplevel,
+        fixme
+
+[BASIC]
+good-names=i,
+           j,
+           k,
+           ex,
+           tz,
+           Run,
+           _
+
+[DESIGN]
+max-args=8
+max-positional-arguments=8
