@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 
@@ -12,7 +13,7 @@ def update_config():
         Cfg.App.token = api_token
 
 
-def run_tests():
+def run_tests(xml_report=True):
     """
     Pytest exit codes:
       EXIT_OK = 0
@@ -22,10 +23,11 @@ def run_tests():
       EXIT_USAGEERROR = 4
       EXIT_NOTESTSCOLLECTED = 5
     """
-    args = [
-        './tests', '-s', '--junitxml', './test-report.xml',
-        '--disable-warnings',
-    ]
+    args = ['./tests', '-s', '--disable-warnings']
+
+    if xml_report:
+        args.extend(['--junitxml', './test-report.xml'])
+
     exit_code = pytest.main(args)
 
     if exit_code not in (0, 1,):
@@ -35,8 +37,13 @@ def run_tests():
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Run pytest')
+    parser.add_argument('--local', dest='is_local', action='store_true')
+    parser.set_defaults(is_local=False)
+    args = parser.parse_args()
+
     update_config()
-    run_tests()
+    run_tests(xml_report=not args.is_local)
 
 
 if __name__ == '__main__':

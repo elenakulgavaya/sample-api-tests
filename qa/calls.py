@@ -13,7 +13,7 @@ class CreateOrder(ApiCaller):
 
     def __init__(self, token=None, price=None, quantity=None, discount=None,
                  note=None, updates=None):
-        if token is '':
+        if token == '':
             headers = None
         else:
             headers = {'Authorization': f'Bearer {token or Cfg.App.token}'}

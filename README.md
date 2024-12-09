@@ -1,5 +1,8 @@
 # sample-api-tests
 
+![Tests](https://github.com/elenakulgavaya/sample-api-tests/actions/workflows/test.yml/badge.svg)
+![Linter](https://github.com/elenakulgavaya/sample-api-tests/actions/workflows/pylint.yml/badge.svg)
+
 ## Documentation
 
 - [Detailed setup and execution instructions](docs/instructions.md) 
