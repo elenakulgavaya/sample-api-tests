@@ -13,6 +13,11 @@ class CreateOrder(ApiCaller):
 
     def __init__(self, token=None, price=None, quantity=None, discount=None,
                  note=None, updates=None):
+        if token is '':
+            headers = None
+        else:
+            headers = {'Authorization': f'Bearer {token or Cfg.App.token}'}
+
         token = token or Cfg.App.token
         self.req_body = api.CreateOrderReq().with_values({
             api.CreateOrderReq.PricePerUnit.name: price,
@@ -23,7 +28,7 @@ class CreateOrder(ApiCaller):
         super().__init__(
             req_body=self.req_body,
             updates=updates,
-            headers={'Authorization': f'Bearer {token}'}
+            headers=headers
         )
 
     def calculate_total(self):

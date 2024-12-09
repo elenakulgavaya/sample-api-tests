@@ -30,3 +30,7 @@ good-names=i,
            tz,
            Run,
            _
+
+[DESIGN]
+max-args=8
+max-positional-arguments=8
